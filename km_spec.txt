@@ -1,0 +1,25 @@
+/*-----------------------------------------------------------*/
+# KM spec
+# v0.0.1
+
+/-----------------------------------------------------------/
+
+Every KM file starts with frontmatter. Frontmatter is defined by "---" without the quotes. 
+
+The front matter will contain the date, tags and any other metadata that's required. 
+
+The front matter will follow the yaml specs.
+---
+// Frontmatter
+date: 
+---
+
+Markdown rules apply for most text following the front matter.
+
+Only change to the markdown rule will be comments will start with "//" without the quotes. 
+
+Linking between files can be done so using "{{file}}" without the quotes. 
+
+The file will be stored as `file_name.km`.
+
+/*-----------------------------------------------------------*/
