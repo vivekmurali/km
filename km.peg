@@ -1,0 +1,33 @@
+{
+package parser
+}
+
+FILE <- LINE* EOF{
+	return "Hello", nil
+}
+
+LINE <- NL / (NODE+ NL?)
+
+NODE <- HEADING1 
+/* NODE <- HEADING1 / TEXT */
+
+HEADING1 <- HEAD SP TEXT NL NL
+
+/* HEADING1 <- HEAD SP content:TEXT NL NL{ */
+/* 	return newHeading(1, content.(string)) */
+/* } */
+
+TEXT <- CHAR+
+/* TEXT <- CHAR+{ */
+/* 	return "Test", nil */
+/* 	/1* return string(c.text), nil *1/ */
+/* } */
+
+HEAD <- "#"
+
+CHAR <- [^\n\r]
+_ "ignored whitespace" <- [ \n\t\r ]*
+SP "significant whitespace" <- " "
+NL <- '\n' / "\r\n"
+
+EOF <- !.
