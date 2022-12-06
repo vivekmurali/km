@@ -1,29 +1,18 @@
-{
-package parser
+{ 
+package parser 
 }
 
-FILE <- LINE* EOF{
+FILE <- FRONT LINE* EOF{
 	return "Hello", nil
 }
 
-LINE <- NL / (NODE+ NL?)
+FRONT <- DASH NL LINE* DASH NL
 
-NODE <- HEADING1 
-/* NODE <- HEADING1 / TEXT */
+DASH <- "---"
 
-HEADING1 <- HEAD SP TEXT NL NL
-
-/* HEADING1 <- HEAD SP content:TEXT NL NL{ */
-/* 	return newHeading(1, content.(string)) */
-/* } */
+LINE <- !DASH NL / (!DASH TEXT NL?)
 
 TEXT <- CHAR+
-/* TEXT <- CHAR+{ */
-/* 	return "Test", nil */
-/* 	/1* return string(c.text), nil *1/ */
-/* } */
-
-HEAD <- "#"
 
 CHAR <- [^\n\r]
 _ "ignored whitespace" <- [ \n\t\r ]*

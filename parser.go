@@ -22,22 +22,26 @@ var g = &grammar{
 	rules: []*rule{
 		{
 			name: "FILE",
-			pos:  position{line: 5, col: 1, offset: 20},
+			pos:  position{line: 5, col: 1, offset: 22},
 			expr: &actionExpr{
-				pos: position{line: 5, col: 9, offset: 28},
+				pos: position{line: 5, col: 9, offset: 30},
 				run: (*parser).callonFILE1,
 				expr: &seqExpr{
-					pos: position{line: 5, col: 9, offset: 28},
+					pos: position{line: 5, col: 9, offset: 30},
 					exprs: []interface{}{
+						&ruleRefExpr{
+							pos:  position{line: 5, col: 9, offset: 30},
+							name: "FRONT",
+						},
 						&zeroOrMoreExpr{
-							pos: position{line: 5, col: 9, offset: 28},
+							pos: position{line: 5, col: 15, offset: 36},
 							expr: &ruleRefExpr{
-								pos:  position{line: 5, col: 9, offset: 28},
+								pos:  position{line: 5, col: 15, offset: 36},
 								name: "LINE",
 							},
 						},
 						&ruleRefExpr{
-							pos:  position{line: 5, col: 15, offset: 34},
+							pos:  position{line: 5, col: 21, offset: 42},
 							name: "EOF",
 						},
 					},
@@ -45,29 +49,87 @@ var g = &grammar{
 			},
 		},
 		{
-			name: "LINE",
-			pos:  position{line: 9, col: 1, offset: 63},
-			expr: &choiceExpr{
-				pos: position{line: 9, col: 9, offset: 71},
-				alternatives: []interface{}{
+			name: "FRONT",
+			pos:  position{line: 9, col: 1, offset: 71},
+			expr: &seqExpr{
+				pos: position{line: 9, col: 10, offset: 80},
+				exprs: []interface{}{
 					&ruleRefExpr{
-						pos:  position{line: 9, col: 9, offset: 71},
+						pos:  position{line: 9, col: 10, offset: 80},
+						name: "DASH",
+					},
+					&ruleRefExpr{
+						pos:  position{line: 9, col: 15, offset: 85},
 						name: "NL",
 					},
+					&zeroOrMoreExpr{
+						pos: position{line: 9, col: 18, offset: 88},
+						expr: &ruleRefExpr{
+							pos:  position{line: 9, col: 18, offset: 88},
+							name: "LINE",
+						},
+					},
+					&ruleRefExpr{
+						pos:  position{line: 9, col: 24, offset: 94},
+						name: "DASH",
+					},
+					&ruleRefExpr{
+						pos:  position{line: 9, col: 29, offset: 99},
+						name: "NL",
+					},
+				},
+			},
+		},
+		{
+			name: "DASH",
+			pos:  position{line: 11, col: 1, offset: 103},
+			expr: &litMatcher{
+				pos:        position{line: 11, col: 9, offset: 111},
+				val:        "---",
+				ignoreCase: false,
+				want:       "\"---\"",
+			},
+		},
+		{
+			name: "LINE",
+			pos:  position{line: 13, col: 1, offset: 118},
+			expr: &choiceExpr{
+				pos: position{line: 13, col: 9, offset: 126},
+				alternatives: []interface{}{
 					&seqExpr{
-						pos: position{line: 9, col: 15, offset: 77},
+						pos: position{line: 13, col: 9, offset: 126},
 						exprs: []interface{}{
-							&oneOrMoreExpr{
-								pos: position{line: 9, col: 15, offset: 77},
+							&notExpr{
+								pos: position{line: 13, col: 9, offset: 126},
 								expr: &ruleRefExpr{
-									pos:  position{line: 9, col: 15, offset: 77},
-									name: "NODE",
+									pos:  position{line: 13, col: 10, offset: 127},
+									name: "DASH",
 								},
 							},
-							&zeroOrOneExpr{
-								pos: position{line: 9, col: 21, offset: 83},
+							&ruleRefExpr{
+								pos:  position{line: 13, col: 15, offset: 132},
+								name: "NL",
+							},
+						},
+					},
+					&seqExpr{
+						pos: position{line: 13, col: 21, offset: 138},
+						exprs: []interface{}{
+							&notExpr{
+								pos: position{line: 13, col: 21, offset: 138},
 								expr: &ruleRefExpr{
-									pos:  position{line: 9, col: 21, offset: 83},
+									pos:  position{line: 13, col: 22, offset: 139},
+									name: "DASH",
+								},
+							},
+							&ruleRefExpr{
+								pos:  position{line: 13, col: 27, offset: 144},
+								name: "TEXT",
+							},
+							&zeroOrOneExpr{
+								pos: position{line: 13, col: 32, offset: 149},
+								expr: &ruleRefExpr{
+									pos:  position{line: 13, col: 32, offset: 149},
 									name: "NL",
 								},
 							},
@@ -77,68 +139,21 @@ var g = &grammar{
 			},
 		},
 		{
-			name: "NODE",
-			pos:  position{line: 11, col: 1, offset: 89},
-			expr: &ruleRefExpr{
-				pos:  position{line: 11, col: 9, offset: 97},
-				name: "HEADING1",
-			},
-		},
-		{
-			name: "HEADING1",
-			pos:  position{line: 14, col: 1, offset: 138},
-			expr: &seqExpr{
-				pos: position{line: 14, col: 13, offset: 150},
-				exprs: []interface{}{
-					&ruleRefExpr{
-						pos:  position{line: 14, col: 13, offset: 150},
-						name: "HEAD",
-					},
-					&ruleRefExpr{
-						pos:  position{line: 14, col: 18, offset: 155},
-						name: "SP",
-					},
-					&ruleRefExpr{
-						pos:  position{line: 14, col: 21, offset: 158},
-						name: "TEXT",
-					},
-					&ruleRefExpr{
-						pos:  position{line: 14, col: 26, offset: 163},
-						name: "NL",
-					},
-					&ruleRefExpr{
-						pos:  position{line: 14, col: 29, offset: 166},
-						name: "NL",
-					},
-				},
-			},
-		},
-		{
 			name: "TEXT",
-			pos:  position{line: 20, col: 1, offset: 271},
+			pos:  position{line: 15, col: 1, offset: 155},
 			expr: &oneOrMoreExpr{
-				pos: position{line: 20, col: 9, offset: 279},
+				pos: position{line: 15, col: 9, offset: 163},
 				expr: &ruleRefExpr{
-					pos:  position{line: 20, col: 9, offset: 279},
+					pos:  position{line: 15, col: 9, offset: 163},
 					name: "CHAR",
 				},
 			},
 		},
 		{
-			name: "HEAD",
-			pos:  position{line: 26, col: 1, offset: 383},
-			expr: &litMatcher{
-				pos:        position{line: 26, col: 9, offset: 391},
-				val:        "#",
-				ignoreCase: false,
-				want:       "\"#\"",
-			},
-		},
-		{
 			name: "CHAR",
-			pos:  position{line: 28, col: 1, offset: 396},
+			pos:  position{line: 17, col: 1, offset: 170},
 			expr: &charClassMatcher{
-				pos:        position{line: 28, col: 9, offset: 404},
+				pos:        position{line: 17, col: 9, offset: 178},
 				val:        "[^\\n\\r]",
 				chars:      []rune{'\n', '\r'},
 				ignoreCase: false,
@@ -148,11 +163,11 @@ var g = &grammar{
 		{
 			name:        "_",
 			displayName: "\"ignored whitespace\"",
-			pos:         position{line: 29, col: 1, offset: 412},
+			pos:         position{line: 18, col: 1, offset: 186},
 			expr: &zeroOrMoreExpr{
-				pos: position{line: 29, col: 27, offset: 438},
+				pos: position{line: 18, col: 27, offset: 212},
 				expr: &charClassMatcher{
-					pos:        position{line: 29, col: 27, offset: 438},
+					pos:        position{line: 18, col: 27, offset: 212},
 					val:        "[ \\n\\t\\r ]",
 					chars:      []rune{' ', '\n', '\t', '\r', ' '},
 					ignoreCase: false,
@@ -163,9 +178,9 @@ var g = &grammar{
 		{
 			name:        "SP",
 			displayName: "\"significant whitespace\"",
-			pos:         position{line: 30, col: 1, offset: 450},
+			pos:         position{line: 19, col: 1, offset: 224},
 			expr: &litMatcher{
-				pos:        position{line: 30, col: 32, offset: 481},
+				pos:        position{line: 19, col: 32, offset: 255},
 				val:        " ",
 				ignoreCase: false,
 				want:       "\" \"",
@@ -173,18 +188,18 @@ var g = &grammar{
 		},
 		{
 			name: "NL",
-			pos:  position{line: 31, col: 1, offset: 485},
+			pos:  position{line: 20, col: 1, offset: 259},
 			expr: &choiceExpr{
-				pos: position{line: 31, col: 7, offset: 491},
+				pos: position{line: 20, col: 7, offset: 265},
 				alternatives: []interface{}{
 					&litMatcher{
-						pos:        position{line: 31, col: 7, offset: 491},
+						pos:        position{line: 20, col: 7, offset: 265},
 						val:        "\n",
 						ignoreCase: false,
 						want:       "\"\\n\"",
 					},
 					&litMatcher{
-						pos:        position{line: 31, col: 14, offset: 498},
+						pos:        position{line: 20, col: 14, offset: 272},
 						val:        "\r\n",
 						ignoreCase: false,
 						want:       "\"\\r\\n\"",
@@ -194,11 +209,11 @@ var g = &grammar{
 		},
 		{
 			name: "EOF",
-			pos:  position{line: 33, col: 1, offset: 506},
+			pos:  position{line: 22, col: 1, offset: 280},
 			expr: &notExpr{
-				pos: position{line: 33, col: 8, offset: 513},
+				pos: position{line: 22, col: 8, offset: 287},
 				expr: &anyMatcher{
-					line: 33, col: 9, offset: 514,
+					line: 22, col: 9, offset: 288,
 				},
 			},
 		},
