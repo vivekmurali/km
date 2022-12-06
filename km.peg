@@ -2,17 +2,22 @@
 package parser 
 }
 
-FILE <- FRONT LINE* EOF{
-	return "Hello", nil
+FILE <- front:FRONT md:LINE* EOF{
+	/* return "Hello", nil */
+	return handle(front, md), nil
 }
 
 FRONT <- DASH NL LINE* DASH NL
 
 DASH <- "---"
 
-LINE <- !DASH NL / (!DASH TEXT NL?)
+LINE <- !DASH NL / (!DASH TEXT NL?){
+	return string(c.text), nil
+}
 
-TEXT <- CHAR+
+TEXT <- CHAR+{
+	return string(c.text), nil
+}
 
 CHAR <- [^\n\r]
 _ "ignored whitespace" <- [ \n\t\r ]*
