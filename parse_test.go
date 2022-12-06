@@ -11,19 +11,24 @@ func TestParse(t *testing.T) {
 	// 	if err != nil {
 	// 		t.Fatal("Unexpected err: ", err)
 	// 	}
-	// 	if text != "\n# Test\n" {
+	// 	kmData := text.(km)
+	// 	if kmData.md != "\n# Test\n" {
 	// 		t.Fatal("Expected # Test but got: ", text)
 	// 	}
 	// })
 
 	t.Run("HEADING1", func(t *testing.T) {
 
-		text, err := Parse("HEADING1", []byte("---\n hi\n---\n hello\n\n"))
+		text, err := Parse("HEADING1", []byte("---\nTags=['Hi']\n---\n hello\n\n"))
 		if err != nil {
 			t.Fatal("Unexpected err: ", err)
 		}
-		if text != " hello\n\n" {
-			t.Fatal("Expected Hello but got: ", text)
+		kmData := text.(km)
+		if kmData.md != " hello\n\n" {
+			t.Fatal("Expected hello but got: ", text)
+		}
+		if kmData.front.Tags[0] != "Hi" {
+			t.Fatal("Not the right tags")
 		}
 
 	})

@@ -3,7 +3,6 @@ package parser
 }
 
 FILE <- front:FRONT md:LINE* EOF{
-	/* return "Hello", nil */
 	return handle(front, md), nil
 }
 

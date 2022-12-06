@@ -1,8 +1,11 @@
 package parser
 
 import (
+	"log"
 	"strings"
 	"time"
+
+	"github.com/BurntSushi/toml"
 )
 
 type km struct {
@@ -11,12 +14,15 @@ type km struct {
 }
 
 type front struct {
-	date time.Time
-	tags []string
+	Date time.Time
+	Tags []string
 }
 
 func handle(front, md interface{}) interface{} {
 	mdSlice := toIfaceSlice(md)
+	frontSlice := toIfaceSlice(front)
+
+	f := frontMatter(frontSlice)
 
 	var markdown strings.Builder
 
@@ -34,7 +40,32 @@ func handle(front, md interface{}) interface{} {
 		markdown.WriteString(text)
 
 	}
-	return markdown.String()
+
+	log.Printf("%+v", f)
+
+	kmData := km{md: markdown.String(), front: f}
+	return kmData
+}
+
+func frontMatter(f []interface{}) front {
+
+	frontStrings := toIfaceSlice(f[2])
+
+	var frontBuilder strings.Builder
+
+	for _, v := range frontStrings {
+		text := v.(string)
+		frontBuilder.WriteString(text)
+	}
+
+	var frontObject front
+
+	_, err := toml.Decode(frontBuilder.String(), &frontObject)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return frontObject
 }
 
 func toIfaceSlice(v interface{}) []interface{} {
