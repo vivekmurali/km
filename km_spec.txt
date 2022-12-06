@@ -1,6 +1,6 @@
 /*-----------------------------------------------------------*/
 # KM spec
-# v0.0.1
+# v0.0.2
 
 /-----------------------------------------------------------/
 
@@ -11,15 +11,17 @@ The front matter will contain the date, tags and any other metadata that's requi
 The front matter will follow the yaml specs.
 ---
 // Frontmatter
-date: 
+date: YYYY-MM-DD
+tags: 
+	-abc
+	-def
+	-ghi
 ---
 
 Markdown rules apply for most text following the front matter.
 
 Only change to the markdown rule will be comments will start with "//" without the quotes. 
 
-Linking between files can be done so using "{{file}}" without the quotes. 
-
-The file will be stored as `file_name.km`.
+The file will be stored as `randomly_generated_string.km`.
 
 /*-----------------------------------------------------------*/
