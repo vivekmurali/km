@@ -35,9 +35,9 @@ func (s *app) closeDB() {
 	s.db.Close()
 }
 
-func (s *app) insertDB(name, content string, protected bool) error {
+func (s *app) insertDB(tags []string, content string, protected bool) error {
 
-	tag, err := s.db.Exec(context.Background(), "insert into notes(NAME, CONTENT, PROTECTED) values($1, $2, $3)", &name, &content, &protected)
+	tag, err := s.db.Exec(context.Background(), "insert into notes(TAGS, CONTENT, PROTECTED) values($1, $2, $3)", &tags, &content, &protected)
 
 	if err != nil {
 		return err
@@ -48,4 +48,27 @@ func (s *app) insertDB(name, content string, protected bool) error {
 	}
 
 	return nil
+}
+
+func (s *app) getNotesFromDB() ([]notes, error) {
+	var n []notes
+
+	rows, err := s.db.Query(context.Background(), "select tags, content, created from notes where protected=false limit 10")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var singlenote notes
+		err = rows.Scan(&singlenote.Tags, &singlenote.Content, &singlenote.Created)
+		if err != nil {
+			return nil, err
+		}
+		n = append(n, singlenote)
+	}
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+	return n, nil
 }

@@ -24,6 +24,10 @@ func main() {
 		w.Write([]byte("Hello World!"))
 	})
 
-	r.Post("/notes", s.postNote)
+	r.Route("/notes", func(r chi.Router) {
+		r.Get("/", s.getNotes)
+		r.Post("/", s.postNote)
+	})
+
 	http.ListenAndServe(os.Getenv("PORT"), r)
 }

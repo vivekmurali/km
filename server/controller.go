@@ -2,11 +2,14 @@ package main
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
+
+	"github.com/jackc/pgtype"
 )
 
 type note struct {
-	Name      string
+	Tags      []string
 	Content   string
 	Protected bool
 }
@@ -21,7 +24,7 @@ func (s *app) postNote(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = s.insertDB(n.Name, n.Content, n.Protected)
+	err = s.insertDB(n.Tags, n.Content, n.Protected)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -37,4 +40,25 @@ func (s *app) postNote(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	w.Write(returnJson)
+}
+
+type notes struct {
+	Tags    []string
+	Content string
+	Created pgtype.Timestamptz
+}
+
+func (s *app) getNotes(w http.ResponseWriter, r *http.Request) {
+	notes, err := s.getNotesFromDB()
+	if err != nil {
+		log.Println("Error getting notes from DB", err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	err = json.NewEncoder(w).Encode(notes)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 }
