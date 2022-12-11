@@ -2,10 +2,10 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
-	"time"
 )
 
 type note struct {
@@ -13,6 +13,7 @@ type note struct {
 	Tags      []string
 	Content   string
 	Protected bool
+	ID        int64
 }
 
 func (s *app) postNote(w http.ResponseWriter, r *http.Request) {
@@ -47,8 +48,11 @@ type notes struct {
 	Title   string
 	Tags    []string
 	ID      int64
-	Content string
-	Created time.Time
+	Created string
+}
+
+func (s *app) singleNote(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "hello world")
 }
 
 func (s *app) getNotes(w http.ResponseWriter, r *http.Request) {

@@ -14,7 +14,7 @@
 
     <ul>
         {{range .}}
-        <li>{{.}}</li>
+        <li>{{.Created}} - <a href="/notes/{{.ID}}">{{.Title}}</a></li>
         {{end}}
     </ul>
 </body>

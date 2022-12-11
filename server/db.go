@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -53,7 +54,7 @@ func (s *app) insertDB(tags []string, title, content string, protected bool) err
 func (s *app) getNotesFromDB() ([]notes, error) {
 	var n []notes
 
-	rows, err := s.db.Query(context.Background(), "select id, title, content, created, tags from notes where protected=false limit 30")
+	rows, err := s.db.Query(context.Background(), "select id, title, created, tags from notes where protected=false limit 30")
 	if err != nil {
 		return nil, err
 	}
@@ -61,10 +62,13 @@ func (s *app) getNotesFromDB() ([]notes, error) {
 
 	for rows.Next() {
 		var singlenote notes
-		err = rows.Scan(&singlenote.ID, &singlenote.Title, &singlenote.Content, &singlenote.Created, &singlenote.Tags)
+		var created time.Time
+		err = rows.Scan(&singlenote.ID, &singlenote.Title, &created, &singlenote.Tags)
 		if err != nil {
 			return nil, err
 		}
+
+		singlenote.Created = created.Format(time.RFC822)
 		n = append(n, singlenote)
 	}
 	if err = rows.Err(); err != nil {
