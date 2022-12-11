@@ -16,3 +16,4 @@ test.km
 # vendor/
 
 .env
+.DS_Store

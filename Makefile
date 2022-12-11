@@ -1,2 +1,4 @@
 serve:
-	go run ./server/
+	go build -o server/httpserver ./server/ 
+	./server/httpserver
+

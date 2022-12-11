@@ -1,8 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 	"os"
+	"path/filepath"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -20,6 +22,12 @@ func main() {
 	defer s.closeDB()
 
 	r.Use(middleware.Logger)
+
+	workDir, _ := os.Getwd()
+	filesDir := http.Dir(filepath.Join(workDir, "server/static"))
+	fmt.Println(filepath.Join(workDir, "static"))
+	FileServer(r, "/static", filesDir)
+
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Hello World!"))
 	})
@@ -28,6 +36,5 @@ func main() {
 		r.Get("/", s.getNotes)
 		r.Post("/", s.postNote)
 	})
-
 	http.ListenAndServe(os.Getenv("PORT"), r)
 }
