@@ -14,8 +14,9 @@ type km struct {
 }
 
 type front struct {
-	Date time.Time
-	Tags []string
+	Title string
+	Date  time.Time
+	Tags  []string
 }
 
 func handle(front, md interface{}) interface{} {
