@@ -2,10 +2,12 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"html/template"
 	"log"
 	"net/http"
+	"strconv"
+
+	"github.com/go-chi/chi/v5"
 )
 
 type note struct {
@@ -13,7 +15,6 @@ type note struct {
 	Tags      []string
 	Content   string
 	Protected bool
-	ID        int64
 }
 
 func (s *app) postNote(w http.ResponseWriter, r *http.Request) {
@@ -49,10 +50,32 @@ type notes struct {
 	Tags    []string
 	ID      int64
 	Created string
+	Content string
 }
 
 func (s *app) singleNote(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "hello world")
+	id := chi.URLParam(r, "id")
+	intID, err := strconv.ParseInt(id, 10, 64)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(err.Error()))
+	}
+	note, err := s.getSingleNote(intID)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(err.Error()))
+	}
+
+	tmpl, err := template.ParseFiles("server/templates/note.html")
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Could not open template"))
+	}
+	err = tmpl.Execute(w, note)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Could not open template"))
+	}
 }
 
 func (s *app) getNotes(w http.ResponseWriter, r *http.Request) {
@@ -62,12 +85,6 @@ func (s *app) getNotes(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-
-	// err = json.NewEncoder(w).Encode(notes)
-	// if err != nil {
-	// 	http.Error(w, err.Error(), http.StatusBadRequest)
-	// 	return
-	// }
 
 	tmpl, err := template.ParseFiles("server/templates/index.html")
 	if err != nil {

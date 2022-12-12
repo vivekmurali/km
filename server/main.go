@@ -35,6 +35,7 @@ func main() {
 	r.Route("/notes", func(r chi.Router) {
 		r.Get("/", s.getNotes)
 		r.Post("/", s.postNote)
+		r.Get("/{id}", s.singleNote)
 	})
 	http.ListenAndServe(os.Getenv("PORT"), r)
 }

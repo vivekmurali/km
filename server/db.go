@@ -76,3 +76,16 @@ func (s *app) getNotesFromDB() ([]notes, error) {
 	}
 	return n, nil
 }
+
+func (s *app) getSingleNote(id int64) (notes, error) {
+	var note notes
+	var created time.Time
+	err := s.db.QueryRow(context.Background(), "select title, created, tags, content from notes where id=$1", id).Scan(&note.Title, &created, &note.Tags, &note.Content)
+	if err != nil {
+		return note, err
+	}
+
+	note.Created = created.Format(time.RFC822)
+
+	return note, nil
+}
