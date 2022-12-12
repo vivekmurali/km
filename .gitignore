@@ -17,3 +17,5 @@ test.km
 
 .env
 .DS_Store
+
+server/httpserver

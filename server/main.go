@@ -29,7 +29,7 @@ func main() {
 	FileServer(r, "/static", filesDir)
 
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("Hello World!"))
+		http.Redirect(w, r, "/notes", http.StatusTemporaryRedirect)
 	})
 
 	r.Route("/notes", func(r chi.Router) {
