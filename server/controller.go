@@ -8,6 +8,7 @@ import (
 	"strconv"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/gomarkdown/markdown"
 )
 
 type note struct {
@@ -51,6 +52,7 @@ type notes struct {
 	ID      int64
 	Created string
 	Content string
+	HTML    template.HTML
 }
 
 func (s *app) singleNote(w http.ResponseWriter, r *http.Request) {
@@ -65,6 +67,9 @@ func (s *app) singleNote(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte(err.Error()))
 	}
+
+	htmlData := markdown.ToHTML([]byte(note.Content), nil, nil)
+	note.HTML = template.HTML((htmlData))
 
 	tmpl, err := template.ParseFiles("server/templates/note.html")
 	if err != nil {
