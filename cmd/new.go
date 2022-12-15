@@ -17,7 +17,6 @@ func New(ctx *cli.Context) error {
 		return err
 	}
 
-	// Generate random number and convert to string
 	rand.Seed(time.Now().UnixNano())
 	num := rand.Intn(1000)
 	numString := strconv.Itoa(num)
@@ -31,8 +30,7 @@ func New(ctx *cli.Context) error {
 	defer f.Close()
 
 	date := time.Now().Format("2006-01-02")
-	// Write frontmatter to file
-	s := fmt.Sprintf("---\ntitle: \ndate: %s \ntags: \n---\n", date)
+	s := fmt.Sprintf("---\ntitle=\"\" \ndate= %s \ntags= []\n---\n", date)
 	_, err = f.WriteString(s)
 
 	fmt.Println("Created file: ", fileName)

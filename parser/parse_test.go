@@ -23,7 +23,7 @@ func TestParse(t *testing.T) {
 		if err != nil {
 			t.Fatal("Unexpected err: ", err)
 		}
-		kmData := text.(km)
+		kmData := text.(KM)
 		if kmData.md != " hello\n\n" {
 			t.Fatal("Expected hello but got: ", text)
 		}

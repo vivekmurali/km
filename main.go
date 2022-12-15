@@ -24,6 +24,12 @@ func main() {
 				Usage:   "Create new KM",
 				Action:  cmd.New,
 			},
+			{
+				Name:    "commit",
+				Aliases: []string{"c"},
+				Usage:   "Commit all files to server",
+				Action:  cmd.Commit,
+			},
 		},
 	}
 

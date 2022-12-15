@@ -8,12 +8,12 @@ import (
 	"github.com/BurntSushi/toml"
 )
 
-type km struct {
-	front front
-	md    string
+type KM struct {
+	Front Front
+	MD    string
 }
 
-type front struct {
+type Front struct {
 	Title string
 	Date  time.Time
 	Tags  []string
@@ -44,11 +44,11 @@ func handle(front, md interface{}) interface{} {
 
 	log.Printf("%+v", f)
 
-	kmData := km{md: markdown.String(), front: f}
+	kmData := KM{MD: markdown.String(), Front: f}
 	return kmData
 }
 
-func frontMatter(f []interface{}) front {
+func frontMatter(f []interface{}) Front {
 
 	frontStrings := toIfaceSlice(f[2])
 
@@ -59,7 +59,7 @@ func frontMatter(f []interface{}) front {
 		frontBuilder.WriteString(text)
 	}
 
-	var frontObject front
+	var frontObject Front
 
 	_, err := toml.Decode(frontBuilder.String(), &frontObject)
 	if err != nil {
