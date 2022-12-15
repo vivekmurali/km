@@ -1,6 +1,6 @@
 /*-----------------------------------------------------------*/
 # KM spec
-# v0.0.2
+# v0.0.3
 
 /-----------------------------------------------------------/
 
@@ -9,8 +9,9 @@ Every KM file starts with frontmatter. Frontmatter is defined by "---" without t
 The front matter will contain the date, tags and any other metadata that's required. 
 
 The front matter will follow the yaml specs.
+
 ---
-// Frontmatter
+title: some text
 date: YYYY-MM-DD
 tags: 
 	-abc
