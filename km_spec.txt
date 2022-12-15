@@ -8,15 +8,12 @@ Every KM file starts with frontmatter. Frontmatter is defined by "---" without t
 
 The front matter will contain the date, tags and any other metadata that's required. 
 
-The front matter will follow the yaml specs.
+The front matter will follow the toml specs.
 
 ---
 title: some text
 date: YYYY-MM-DD
-tags: 
-	-abc
-	-def
-	-ghi
+tags: ["abc", "def", "ghi"]
 ---
 
 Markdown rules apply for most text following the front matter.
