@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/urfave/cli/v2"
+	"github.com/vivekmurali/km/cmd"
 )
 
 func main() {
@@ -15,6 +16,14 @@ func main() {
 		Action: func(*cli.Context) error {
 			fmt.Println("Knowledge Management")
 			return nil
+		},
+		Commands: []*cli.Command{
+			{
+				Name:    "new",
+				Aliases: []string{"n"},
+				Usage:   "Create new KM",
+				Action:  cmd.New,
+			},
 		},
 	}
 

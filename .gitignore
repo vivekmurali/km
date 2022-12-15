@@ -19,3 +19,6 @@ test.km
 .DS_Store
 
 server/httpserver
+*.out
+
+notes/
