@@ -1,6 +1,6 @@
 /*-----------------------------------------------------------*/
 # KM spec
-# v0.0.3
+# v0.0.4
 
 /-----------------------------------------------------------/
 
@@ -11,9 +11,9 @@ The front matter will contain the date, tags and any other metadata that's requi
 The front matter will follow the toml specs.
 
 ---
-title: some text
-date: YYYY-MM-DD
-tags: ["abc", "def", "ghi"]
+title = some text
+tags = ["abc", "def", "ghi"]
+protected = false
 ---
 
 Markdown rules apply for most text following the front matter.
