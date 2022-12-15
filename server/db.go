@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net/url"
 	"os"
 	"time"
 
@@ -38,7 +39,12 @@ func (s *app) closeDB() {
 
 func (s *app) insertDB(tags []string, title, content string, protected bool) error {
 
-	tag, err := s.db.Exec(context.Background(), "insert into notes(TITLE, TAGS, CONTENT, PROTECTED) values($1, $2, $3, $4)", &title, &tags, &content, &protected)
+	decodedContent, err := url.QueryUnescape(content)
+	if err != nil {
+		return err
+	}
+
+	tag, err := s.db.Exec(context.Background(), "insert into notes(TITLE, TAGS, CONTENT, PROTECTED) values($1, $2, $3, $4)", &title, &tags, &decodedContent, &protected)
 
 	if err != nil {
 		return err

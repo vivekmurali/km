@@ -68,6 +68,7 @@ func (s *app) singleNote(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(err.Error()))
 	}
 
+	note.Content = string(markdown.NormalizeNewlines([]byte(note.Content)))
 	htmlData := markdown.ToHTML([]byte(note.Content), nil, nil)
 	note.HTML = template.HTML((htmlData))
 
