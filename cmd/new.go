@@ -12,7 +12,12 @@ import (
 )
 
 func New(ctx *cli.Context) error {
-	err := createIfNotExists("notes")
+	home, err := os.UserHomeDir()
+	if err != nil {
+		return err
+	}
+
+	err = createIfNotExists(home + "/notes")
 	if err != nil {
 		return err
 	}
@@ -21,7 +26,7 @@ func New(ctx *cli.Context) error {
 	num := rand.Intn(1000)
 	numString := strconv.Itoa(num)
 
-	fileName := fmt.Sprintf("notes/%s.km", numString)
+	fileName := fmt.Sprintf("%s/notes/%s.km", home, numString)
 
 	f, err := os.Create(fileName)
 	if err != nil {

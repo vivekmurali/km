@@ -21,13 +21,18 @@ type note struct {
 }
 
 func Commit(ctx *cli.Context) error {
-	fmt.Println("Committing all notes")
-	err := createIfNotExists("notes/archive")
+	home, err := os.UserHomeDir()
 	if err != nil {
 		return err
 	}
 
-	files, err := os.ReadDir("notes")
+	fmt.Println("Committing all notes")
+	err = createIfNotExists(home + "/notes/archive")
+	if err != nil {
+		return err
+	}
+
+	files, err := os.ReadDir(home + "/notes")
 	if err != nil {
 		return err
 	}
@@ -50,8 +55,13 @@ func Commit(ctx *cli.Context) error {
 func serverCommit(f os.DirEntry, wg *sync.WaitGroup) error {
 	defer wg.Done()
 
-	path := fmt.Sprintf("notes/%s", f.Name())
-	archivePath := fmt.Sprintf("notes/archive/%s", f.Name())
+	home, err := os.UserHomeDir()
+	if err != nil {
+		return err
+	}
+
+	path := fmt.Sprintf("%s/notes/%s", home, f.Name())
+	archivePath := fmt.Sprintf("%s/notes/archive/%s", home, f.Name())
 	text, err := parser.ParseFile(path)
 	if err != nil {
 		return err
