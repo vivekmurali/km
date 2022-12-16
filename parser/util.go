@@ -3,7 +3,6 @@ package parser
 import (
 	"log"
 	"strings"
-	"time"
 
 	"github.com/BurntSushi/toml"
 )
@@ -14,9 +13,9 @@ type KM struct {
 }
 
 type Front struct {
-	Title string
-	Date  time.Time
-	Tags  []string
+	Title     string
+	Protected bool
+	Tags      []string
 }
 
 func handle(front, md interface{}) interface{} {

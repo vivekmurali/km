@@ -29,8 +29,7 @@ func New(ctx *cli.Context) error {
 	}
 	defer f.Close()
 
-	date := time.Now().Format("2006-01-02")
-	s := fmt.Sprintf("---\ntitle=\"\" \ndate= %s \ntags= []\n---\n", date)
+	s := fmt.Sprintf("---\ntitle=\"\"\nprotected= false\ntags= []\n---\n")
 	_, err = f.WriteString(s)
 
 	fmt.Println("Created file: ", fileName)

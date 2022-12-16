@@ -36,6 +36,7 @@ func Commit(ctx *cli.Context) error {
 	for _, file := range files {
 		if !file.IsDir() {
 			wg.Add(1)
+			// TODO: goroutine
 			err = serverCommit(file, &wg)
 			if err != nil {
 				return err
@@ -62,6 +63,7 @@ func serverCommit(f os.DirEntry, wg *sync.WaitGroup) error {
 	n.Title = km.Front.Title
 	n.Tags = km.Front.Tags
 	n.Content = km.MD
+	n.Protected = km.Front.Protected
 
 	body, err := json.Marshal(n)
 	if err != nil {
