@@ -5,11 +5,15 @@ import (
 	"log"
 	"os"
 
+	"github.com/joho/godotenv"
 	"github.com/urfave/cli/v2"
 	"github.com/vivekmurali/km/cmd"
 )
 
 func main() {
+
+	godotenv.Load()
+
 	app := &cli.App{
 		Name:  "km",
 		Usage: "Knowledge Management",
