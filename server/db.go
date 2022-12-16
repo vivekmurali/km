@@ -60,7 +60,7 @@ func (s *app) insertDB(tags []string, title, content string, protected bool) err
 func (s *app) getNotesFromDB() ([]notes, error) {
 	var n []notes
 
-	rows, err := s.db.Query(context.Background(), "select id, title, created, tags from notes where protected=false limit 30")
+	rows, err := s.db.Query(context.Background(), "select id, title, created, tags from notes where protected=false order by created desc limit 30")
 	if err != nil {
 		return nil, err
 	}
