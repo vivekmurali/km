@@ -82,10 +82,10 @@ func serverCommit(f os.DirEntry, wg *sync.WaitGroup) error {
 
 	env := os.Getenv("APP_ENV")
 	var url string
-	if env == "prod" {
-		url = "https://notes.vivekmurali.in/notes"
-	} else {
+	if env == "dev" {
 		url = "http://localhost:3000/notes"
+	} else {
+		url = "https://notes.vivekmurali.in/notes"
 	}
 	res, err := http.Post(url, "application/json", bytes.NewBuffer(body))
 	if err != nil {
