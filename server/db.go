@@ -74,7 +74,9 @@ func (s *app) getNotesFromDB() ([]notes, error) {
 			return nil, err
 		}
 
-		singlenote.Created = created.Format(time.RFC822)
+		loc, _ := time.LoadLocation("America/New_York")
+
+		singlenote.Created = created.In(loc).Format(time.RFC822)
 		n = append(n, singlenote)
 	}
 	if err = rows.Err(); err != nil {
