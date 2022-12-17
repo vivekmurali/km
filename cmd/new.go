@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math/rand"
 	"os"
+	"os/exec"
 	"strconv"
 	"time"
 
@@ -37,7 +38,22 @@ func New(ctx *cli.Context) error {
 	s := fmt.Sprintf("---\ntitle=\"\"\nprotected= false\ntags= []\n---\n")
 	_, err = f.WriteString(s)
 
-	fmt.Println("Created file: ", fileName)
+	cmd := exec.Command("vim", fileName)
+	cmd.Stdin = os.Stdin
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+
+	err = cmd.Start()
+	if err != nil {
+		return err
+	}
+
+	err = cmd.Wait()
+	if err != nil {
+		return err
+	}
+
+	fmt.Println("Created note: ", fileName)
 	return nil
 }
 
