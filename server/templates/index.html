@@ -5,19 +5,22 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/static/milligram.min.css">
+    <link rel="stylesheet" href="/static/pico.min.css">
     <title>KM</title>
 </head>
 
 <body>
-    <h2> KM</h2>
+    <div class="container">
+        <header>
+            <h2> <a href="/"> KM</a></h2>
+        </header>
 
-
-    <ul>
-        {{range .}}
-        <li>{{.Created}} - <a href="/notes/{{.ID}}">{{.Title}}</a></li>
-        {{end}}
-    </ul>
+        <ul>
+            {{range .}}
+            <li>{{.Created}} - <a href="/notes/{{.ID}}">{{.Title}}</a></li>
+            {{end}}
+        </ul>
+    </div>
 </body>
 
 </html>
