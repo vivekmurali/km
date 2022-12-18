@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"html/template"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -30,6 +31,14 @@ func main() {
 
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/notes", http.StatusTemporaryRedirect)
+	})
+	r.Get("/new", func(w http.ResponseWriter, r *http.Request) {
+		tmpl, err := template.ParseFiles("server/templates/new.html")
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte(err.Error()))
+		}
+		tmpl.Execute(w, nil)
 	})
 
 	r.Route("/notes", func(r chi.Router) {
