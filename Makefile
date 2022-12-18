@@ -7,5 +7,6 @@ cli:
 	./km.out
 
 deploy:
+	git pull
 	go build -o server/httpserver ./server/
 	service km restart
