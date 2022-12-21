@@ -8,11 +8,13 @@ import (
 	"os"
 	"time"
 
+	"github.com/gorilla/sessions"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type app struct {
-	db *pgxpool.Pool
+	db    *pgxpool.Pool
+	store *sessions.CookieStore
 }
 
 func (s *app) dbInit() {

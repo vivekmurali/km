@@ -5,10 +5,12 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/gomarkdown/markdown"
+	"github.com/pquerna/otp/totp"
 )
 
 type note struct {
@@ -103,4 +105,24 @@ func (s *app) getNotes(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte("Could not open template"))
 	}
+}
+
+func (s *app) login(w http.ResponseWriter, r *http.Request) {
+	session, _ := s.store.Get(r, "session")
+
+	secret := os.Getenv("TOTP_SECRET")
+
+	otp := r.FormValue("otp")
+
+	if !totp.Validate(otp, secret) {
+		w.WriteHeader(http.StatusUnauthorized)
+		w.Write([]byte("Unable to login"))
+		return
+	}
+
+	session.Values["authenticated"] = true
+	session.Save(r, w)
+
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("Logged in"))
 }
