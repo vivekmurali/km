@@ -64,7 +64,7 @@
         });
 
         if (res.ok) {
-            window.location.href = "/";
+            window.location.href = "/notes/{{.ID}}";
         } else {
             console.log(res.body);
             //window.location.reload();
