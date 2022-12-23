@@ -73,6 +73,7 @@ func (s *app) singleNote(w http.ResponseWriter, r *http.Request) {
 	note.Content = string(markdown.NormalizeNewlines([]byte(note.Content)))
 	htmlData := markdown.ToHTML([]byte(note.Content), nil, nil)
 	note.HTML = template.HTML((htmlData))
+	note.ID = intID
 
 	tmpl, err := template.ParseFiles("server/templates/note.html")
 	if err != nil {
@@ -125,4 +126,42 @@ func (s *app) login(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("Logged in"))
+}
+
+func (s *app) editNote(w http.ResponseWriter, r *http.Request) {
+	id := chi.URLParam(r, "id")
+	intID, err := strconv.ParseInt(id, 10, 64)
+	var n note
+
+	err = json.NewDecoder(r.Body).Decode(&n)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	err = s.editInDB(intID, n.Tags, n.Title, n.Content, n.Protected)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+}
+
+func (s *app) showEditNote(w http.ResponseWriter, r *http.Request) {
+	id := chi.URLParam(r, "id")
+	intID, err := strconv.ParseInt(id, 10, 64)
+
+	tmpl, err := template.ParseFiles("server/templates/edit.html")
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(err.Error()))
+	}
+
+	note, err := s.getSingleNote(intID)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(err.Error()))
+	}
+
+	note.ID = intID
+	tmpl.Execute(w, note)
 }

@@ -44,6 +44,11 @@ func main() {
 			tmpl.Execute(w, nil)
 		})
 
+		r.Route("/edit/{id}", func(r chi.Router) {
+			r.Get("/", s.showEditNote)
+			r.Post("/", s.editNote)
+		})
+
 		r.Post("/notes", s.postNote)
 	})
 

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/pico.min.css">
+    <title>KM</title>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h2> <a href="/"> KM</a></h2>
+        </header>
+        <form>
+            <div class="grid">
+                <label for="title">Title
+                    <input type="text" name="title" id="title" placeholder="Title" value="{{.Title}}" required>
+                </label>
+                <label for=" tags">
+                    Tags:
+                    <input type="text" name="tags" id="tags" placeholder="Tags" value="{{.Tags}}">
+                </label>
+            </div>
+            <label for="protected">
+                Protected:
+                <input type="checkbox" name="protected" id="protected">
+            </label>
+
+
+
+            <label for="content">
+                Content:
+                <textarea name="content" id="content" cols="30" rows="10">{{.Content}}</textarea>
+            </label>
+            <button role="button" id="submit-btn">Submit</button>
+        </form>
+    </div>
+</body>
+
+</html>
+<script>
+    document.getElementById("submit-btn").addEventListener("click", async (e) => {
+        e.preventDefault();
+        let title = document.getElementById("title").value;
+        let tagsString = document.getElementById("tags").value;
+        let tags = tagsString.split(",")
+        let protected = document.querySelector("#protected").checked;
+        let content = document.getElementById("content").value;
+
+        let obj = {
+            'title': title,
+            'tags': tags,
+            'protected': protected,
+            'content': content,
+        };
+        let res = await fetch("/edit/{{.ID}}", {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            method: 'POST',
+            body: JSON.stringify(obj),
+        });
+
+        if (res.ok) {
+            window.location.href = "/";
+        } else {
+            console.log(res.body);
+            //window.location.reload();
+        }
+    })
+</script>

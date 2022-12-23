@@ -39,6 +39,20 @@ func (s *app) closeDB() {
 	s.db.Close()
 }
 
+func (s *app) editInDB(id int64, tags []string, title, content string, protected bool) error {
+
+	tag, err := s.db.Exec(context.Background(), "update notes set tags = $1, title = $2, content = $3, protected = $4 where id = $5", tags, title, content, protected, id)
+
+	if err != nil {
+		return err
+	}
+
+	if !tag.Update() {
+		return errors.New("Not update")
+	}
+	return nil
+}
+
 func (s *app) insertDB(tags []string, title, content string, protected bool) error {
 
 	decodedContent, err := url.QueryUnescape(content)
