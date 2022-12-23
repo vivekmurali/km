@@ -39,6 +39,9 @@
 
     document.getElementById("delete-btn").addEventListener("click", async (e) => {
         e.preventDefault();
+        if (!confirm("Are you sure you want to delete?")) {
+            return
+        }
         let res = await fetch("/delete/{{.ID}}", {
             method: 'DELETE',
         });
