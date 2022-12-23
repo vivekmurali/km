@@ -49,6 +49,7 @@ func main() {
 			r.Post("/", s.editNote)
 		})
 
+		r.Delete("/delete/{id}", s.deleteNote)
 		r.Post("/notes", s.postNote)
 	})
 

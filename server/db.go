@@ -113,3 +113,17 @@ func (s *app) getSingleNote(id int64) (notes, error) {
 
 	return note, nil
 }
+
+func (s *app) deleteNoteFromDB(id int64) error {
+
+	tag, err := s.db.Exec(context.Background(), "delete from notes where id = $1", id)
+	if err != nil {
+		return err
+	}
+
+	if !tag.Delete() {
+		return errors.New("Not delete")
+	}
+
+	return nil
+}

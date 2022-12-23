@@ -18,8 +18,12 @@
         <h1>{{.Title}}</h1>
 
         {{.HTML}}
-
+        <!-- <div class="grid"> -->
         <a role="button" href="/edit/{{.ID}}">Edit</a>
+        <br>
+        <br>
+        <button id="delete-btn" class="secondary" style="width: 20%">Delete</button>
+        <!-- </div> -->
     </div>
 
 
@@ -30,3 +34,20 @@
 </body>
 
 </html>
+
+<script>
+
+    document.getElementById("delete-btn").addEventListener("click", async (e) => {
+        e.preventDefault();
+        let res = await fetch("/delete/{{.ID}}", {
+            method: 'DELETE',
+        });
+
+        if (res.ok) {
+            window.location.href = "/";
+        } else {
+            window.location.reload();
+        }
+    })
+
+</script>

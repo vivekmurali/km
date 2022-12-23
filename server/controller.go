@@ -144,6 +144,8 @@ func (s *app) editNote(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("Edited note"))
 }
 
 func (s *app) showEditNote(w http.ResponseWriter, r *http.Request) {
@@ -164,4 +166,18 @@ func (s *app) showEditNote(w http.ResponseWriter, r *http.Request) {
 
 	note.ID = intID
 	tmpl.Execute(w, note)
+}
+
+func (s *app) deleteNote(w http.ResponseWriter, r *http.Request) {
+	id := chi.URLParam(r, "id")
+	intID, err := strconv.ParseInt(id, 10, 64)
+
+	err = s.deleteNoteFromDB(intID)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(err.Error()))
+	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("Deleted"))
 }
