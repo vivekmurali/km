@@ -59,6 +59,10 @@ func main() {
 			http.Redirect(w, r, "/notes", http.StatusTemporaryRedirect)
 		})
 
+		r.Get("/favicon.ico", func(w http.ResponseWriter, r *http.Request) {
+			http.ServeFile(w, r, "server/static/favicon.ico")
+		})
+
 		r.Group(func(r chi.Router) {
 
 			r.Use(s.LoggedInRedirector)
