@@ -109,7 +109,8 @@ func (s *app) getSingleNote(id int64) (notes, error) {
 		return note, err
 	}
 
-	note.Created = created.Format(time.RFC822)
+	loc, _ := time.LoadLocation("America/New_York")
+	note.Created = created.In(loc).Format(time.RFC822)
 
 	return note, nil
 }
