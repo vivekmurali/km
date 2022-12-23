@@ -21,14 +21,13 @@
                 </label>
                 <label for=" tags">
                     Tags:
-                    <input type="text" name="tags" id="tags" placeholder="Tags" value="{{.Tags}}">
+                    <input type="text" name="tags" id="tags" placeholder="Tags" value="{{range .Tags}} {{.}}, {{end}}">
                 </label>
             </div>
             <label for="protected">
                 Protected:
                 <input type="checkbox" name="protected" id="protected">
             </label>
-
 
 
             <label for="content">
