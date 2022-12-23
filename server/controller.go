@@ -13,16 +13,19 @@ import (
 	"github.com/pquerna/otp/totp"
 )
 
-type note struct {
+type notes struct {
 	Title     string
 	Tags      []string
+	ID        int64
+	Created   string
 	Content   string
 	Protected bool
+	HTML      template.HTML
 }
 
 func (s *app) postNote(w http.ResponseWriter, r *http.Request) {
 
-	var n note
+	var n notes
 
 	err := json.NewDecoder(r.Body).Decode(&n)
 	if err != nil {
@@ -46,15 +49,6 @@ func (s *app) postNote(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	w.Write(returnJson)
-}
-
-type notes struct {
-	Title   string
-	Tags    []string
-	ID      int64
-	Created string
-	Content string
-	HTML    template.HTML
 }
 
 func (s *app) singleNote(w http.ResponseWriter, r *http.Request) {
@@ -131,7 +125,7 @@ func (s *app) login(w http.ResponseWriter, r *http.Request) {
 func (s *app) editNote(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	intID, err := strconv.ParseInt(id, 10, 64)
-	var n note
+	var n notes
 
 	err = json.NewDecoder(r.Body).Decode(&n)
 	if err != nil {
