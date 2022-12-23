@@ -58,18 +58,22 @@ func main() {
 		r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 			http.Redirect(w, r, "/notes", http.StatusTemporaryRedirect)
 		})
-		r.Route("/login", func(r chi.Router) {
-			r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-				// Redirect if already logged in
 
-				tmpl, err := template.ParseFiles("server/templates/login.html")
-				if err != nil {
-					w.WriteHeader(http.StatusBadRequest)
-					w.Write([]byte(err.Error()))
-				}
-				tmpl.Execute(w, nil)
+		r.Group(func(r chi.Router) {
+
+			r.Use(s.LoggedInRedirector)
+			r.Route("/login", func(r chi.Router) {
+				r.Get("/", func(w http.ResponseWriter, r *http.Request) {
+					tmpl, err := template.ParseFiles("server/templates/login.html")
+					if err != nil {
+						w.WriteHeader(http.StatusBadRequest)
+						w.Write([]byte(err.Error()))
+					}
+					tmpl.Execute(w, nil)
+				})
+				r.Post("/", s.login)
 			})
-			r.Post("/", s.login)
+
 		})
 		r.Get("/notes", s.getNotes)
 		r.Get("/notes/{id}", s.singleNote)
