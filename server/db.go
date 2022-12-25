@@ -128,3 +128,35 @@ func (s *app) deleteNoteFromDB(id int64) error {
 
 	return nil
 }
+
+func (s *app) searchDB(term string) ([]notes, error) {
+
+	var n []notes
+
+	rows, err := s.db.Query(context.Background(), "select * from search_notes($1)", term)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var singlenote notes
+		var created time.Time
+		var rank any
+		// id integer, title text, tags text[], created timestamp with time zone, content text, rank real
+		err = rows.Scan(&singlenote.ID, &singlenote.Title, &singlenote.Tags, &created, &singlenote.Content, &rank)
+		if err != nil {
+			return nil, err
+		}
+
+		loc, _ := time.LoadLocation("America/New_York")
+
+		singlenote.Created = created.In(loc).Format(time.RFC822)
+		n = append(n, singlenote)
+	}
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+	return n, nil
+
+}
