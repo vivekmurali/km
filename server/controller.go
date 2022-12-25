@@ -175,3 +175,33 @@ func (s *app) deleteNote(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("Deleted"))
 }
+
+func (s *app) search(w http.ResponseWriter, r *http.Request) {
+
+	term := r.URL.Query().Get("q")
+
+	if term == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Empty query"))
+		return
+	}
+
+	notes, err := s.searchDB(term)
+	if err != nil {
+		log.Println("Error getting notes from DB", err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	tmpl, err := template.ParseFiles("server/templates/index.html")
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Could not open template"))
+	}
+
+	err = tmpl.Execute(w, notes)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Could not open template"))
+	}
+}

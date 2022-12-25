@@ -18,6 +18,7 @@
                 </ul>
                 <ul>
                     <li>
+                        <input type="text" name="search" id="search">
                         <a href="/new" role="button">New</a>
                     </li>
                 </ul>
@@ -33,3 +34,13 @@
 </body>
 
 </html>
+
+<script>
+    document.getElementById("search").addEventListener('keypress', (e) => {
+        if (e.key == 'Enter') {
+            e.preventDefault();
+            window.location.href = "/search?q=" + encodeURIComponent(document.getElementById("search").value);
+        }
+    })
+
+</script>

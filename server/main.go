@@ -79,6 +79,7 @@ func main() {
 			})
 
 		})
+		r.Get("/search", s.search)
 		r.Get("/notes", s.getNotes)
 		r.Get("/notes/{id}", s.singleNote)
 	})
