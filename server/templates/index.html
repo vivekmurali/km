@@ -45,4 +45,18 @@
         }
     })
 
+    document.onkeydown = (e) => {
+
+        if (document.getElementById("search") !== document.activeElement) {
+            if (e.key == "/") {
+                e.preventDefault();
+                document.getElementById("search").focus();
+            }
+
+            if (e.key == "n") {
+                window.location.href = "/new"
+            }
+        }
+
+    };
 </script>
