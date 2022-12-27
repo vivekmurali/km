@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/gomarkdown/markdown"
@@ -185,6 +186,9 @@ func (s *app) search(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Empty query"))
 		return
 	}
+
+	sp := strings.Split(term, " ")
+	term = strings.Join(sp, " or ")
 
 	notes, err := s.searchDB(term)
 	if err != nil {
