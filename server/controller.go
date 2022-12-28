@@ -11,6 +11,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/gomarkdown/markdown"
+	"github.com/gomarkdown/markdown/html"
 	"github.com/pquerna/otp/totp"
 )
 
@@ -65,8 +66,11 @@ func (s *app) singleNote(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(err.Error()))
 	}
 
+	htmlFlags := html.HrefTargetBlank
+	opts := html.RendererOptions{Flags: htmlFlags}
+	renderer := html.NewRenderer(opts)
 	note.Content = string(markdown.NormalizeNewlines([]byte(note.Content)))
-	htmlData := markdown.ToHTML([]byte(note.Content), nil, nil)
+	htmlData := markdown.ToHTML([]byte(note.Content), nil, renderer)
 	note.HTML = template.HTML((htmlData))
 	note.ID = intID
 
