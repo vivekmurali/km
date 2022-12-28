@@ -58,5 +58,12 @@
             }
         }
 
+        else {
+            if (e.key == "Escape") {
+                e.preventDefault();
+                document.activeElement.blur();
+            }
+        }
+
     };
 </script>
