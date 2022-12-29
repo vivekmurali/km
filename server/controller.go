@@ -87,7 +87,23 @@ func (s *app) singleNote(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *app) getNotes(w http.ResponseWriter, r *http.Request) {
-	notes, err := s.getNotesFromDB()
+
+	page := r.URL.Query().Get("page")
+	var intPage int
+	var err error
+
+	if page == "" {
+		intPage = 0
+	} else {
+		intPage, err = strconv.Atoi(page)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte(err.Error()))
+			return
+		}
+	}
+
+	notes, err := s.getNotesFromDB(intPage)
 	if err != nil {
 		log.Println("Error getting notes from DB", err)
 		w.WriteHeader(http.StatusBadRequest)

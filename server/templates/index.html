@@ -32,12 +32,40 @@
             <li>{{.Created}} - <a href="/notes/{{.ID}}">{{.Title}}</a></li>
             {{end}}
         </ul>
+
+        <div class="grid">
+            <button id="prev">Prev</button>
+            <button id="next">Next</button>
+        </div>
     </div>
 </body>
 
 </html>
 
 <script>
+
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const page = urlParams.get('page');
+    let pagenum = Number(page);
+
+    if (pagenum < 1) {
+        document.getElementById("prev").disabled = true;
+    }
+
+
+    document.getElementById("prev").addEventListener('click', (e) => {
+        e.preventDefault();
+        pagenum -= 1;
+        window.location.href = "/notes?page=" + pagenum;
+    });
+
+    document.getElementById("next").addEventListener('click', (e) => {
+        e.preventDefault();
+        pagenum += 1;
+        window.location.href = "/notes?page=" + pagenum;
+    });
+
     document.getElementById("search").addEventListener('keypress', (e) => {
         if (e.key == 'Enter') {
             e.preventDefault();
