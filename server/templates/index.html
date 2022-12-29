@@ -43,11 +43,12 @@
 </html>
 
 <script>
-
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     const page = urlParams.get('page');
     let pagenum = Number(page);
+
+    const path = window.location.pathname;
 
     if (pagenum < 1) {
         document.getElementById("prev").disabled = true;
@@ -57,13 +58,13 @@
     document.getElementById("prev").addEventListener('click', (e) => {
         e.preventDefault();
         pagenum -= 1;
-        window.location.href = "/notes?page=" + pagenum;
+        window.location.href = path + "?page=" + pagenum;
     });
 
     document.getElementById("next").addEventListener('click', (e) => {
         e.preventDefault();
         pagenum += 1;
-        window.location.href = "/notes?page=" + pagenum;
+        window.location.href = path + "?page=" + pagenum;
     });
 
     document.getElementById("search").addEventListener('keypress', (e) => {

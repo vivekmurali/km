@@ -12,6 +12,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/gomarkdown/markdown"
 	"github.com/gomarkdown/markdown/html"
+	"github.com/gomarkdown/markdown/parser"
 	"github.com/pquerna/otp/totp"
 )
 
@@ -66,11 +67,21 @@ func (s *app) singleNote(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(err.Error()))
 	}
 
+	//All links open in new tab
 	htmlFlags := html.HrefTargetBlank
 	opts := html.RendererOptions{Flags: htmlFlags}
 	renderer := html.NewRenderer(opts)
+
+	// Difference between \n and \r\n
 	note.Content = string(markdown.NormalizeNewlines([]byte(note.Content)))
-	htmlData := markdown.ToHTML([]byte(note.Content), nil, renderer)
+
+	// Add footnotes support
+	extensions := parser.CommonExtensions | parser.Footnotes
+	parser := parser.NewWithExtensions(extensions)
+
+	htmlData := markdown.ToHTML([]byte(note.Content), parser, renderer)
+
+	// HTML will not render if you do not do this (security)
 	note.HTML = template.HTML((htmlData))
 	note.ID = intID
 
