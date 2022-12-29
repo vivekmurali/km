@@ -86,6 +86,41 @@ func (s *app) singleNote(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func (s *app) getProtectedNotes(w http.ResponseWriter, r *http.Request) {
+	page := r.URL.Query().Get("page")
+	var intPage int
+	var err error
+
+	if page == "" {
+		intPage = 0
+	} else {
+		intPage, err = strconv.Atoi(page)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte(err.Error()))
+			return
+		}
+	}
+	notes, err := s.getNotesFromDB(intPage, true)
+	if err != nil {
+		log.Println("Error getting notes from DB", err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	tmpl, err := template.ParseFiles("server/templates/index.html")
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Could not open template"))
+	}
+
+	err = tmpl.Execute(w, notes)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Could not open template"))
+	}
+}
+
 func (s *app) getNotes(w http.ResponseWriter, r *http.Request) {
 
 	page := r.URL.Query().Get("page")
@@ -103,7 +138,7 @@ func (s *app) getNotes(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	notes, err := s.getNotesFromDB(intPage)
+	notes, err := s.getNotesFromDB(intPage, false)
 	if err != nil {
 		log.Println("Error getting notes from DB", err)
 		w.WriteHeader(http.StatusBadRequest)

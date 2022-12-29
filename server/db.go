@@ -73,11 +73,11 @@ func (s *app) insertDB(tags []string, title, content string, protected bool) err
 	return nil
 }
 
-func (s *app) getNotesFromDB(page int) ([]notes, error) {
+func (s *app) getNotesFromDB(page int, protected bool) ([]notes, error) {
 	var n []notes
 
 	offset := page * 50
-	rows, err := s.db.Query(context.Background(), "select id, title, created, tags from notes where protected=false order by created desc limit 50 offset $1", offset)
+	rows, err := s.db.Query(context.Background(), "select id, title, created, tags from notes where protected=$1 order by created desc limit 50 offset $2", protected, offset)
 	if err != nil {
 		return nil, err
 	}

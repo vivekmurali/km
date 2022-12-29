@@ -51,6 +51,7 @@ func main() {
 
 		r.Delete("/delete/{id}", s.deleteNote)
 		r.Post("/notes", s.postNote)
+		r.Get("/protected", s.getProtectedNotes)
 	})
 
 	//Unprotected routes
