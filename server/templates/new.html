@@ -6,6 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/static/pico.min.css">
+    <link rel="stylesheet" href="/static/simplemde.min.css">
     <title>KM</title>
 </head>
 
@@ -38,10 +39,15 @@
             <button role="button" id="submit-btn">Submit</button>
         </form>
     </div>
+    <script src="/static/simplemde.min.js"></script>
 </body>
 
 </html>
 <script>
+
+    var simplemde = new SimpleMDE();
+
+
     document.getElementById("submit-btn").addEventListener("click", async (e) => {
         e.preventDefault();
         let title = document.getElementById("title").value;
