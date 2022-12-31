@@ -6,6 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/static/pico.min.css">
+    <link rel="stylesheet" href="/static/simplemde.min.css">
     <title>KM</title>
 </head>
 
@@ -21,7 +22,8 @@
                 </label>
                 <label for=" tags">
                     Tags:
-                    <input type="text" name="tags" id="tags" placeholder="Tags" value="{{range .Tags}}{{.}},{{end}}">
+                    <input type="text" name="tags" id="tags" placeholder="Tags"
+                        value="{{range $i, $e := .Tags}}{{if $i }},{{end}}{{$e}}{{end}}">
                 </label>
             </div>
             <label for="protected">
@@ -37,15 +39,19 @@
             <button role="button" id="submit-btn">Submit</button>
         </form>
     </div>
+    <script src="/static/simplemde.min.js"></script>
 </body>
 
 </html>
 <script>
+    var simplemde = new SimpleMDE();
+
     document.getElementById("submit-btn").addEventListener("click", async (e) => {
         e.preventDefault();
         let title = document.getElementById("title").value;
         let tagsString = document.getElementById("tags").value;
         let tags = tagsString.split(",")
+        tags = tags.map(s => s.trim());
         let protected = document.querySelector("#protected").checked;
         let content = document.getElementById("content").value;
 

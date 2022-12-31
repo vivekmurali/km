@@ -53,6 +53,7 @@
         let title = document.getElementById("title").value;
         let tagsString = document.getElementById("tags").value;
         let tags = tagsString.split(",")
+        tags = tags.map(s => s.trim());
         let protected = document.querySelector("#protected").checked;
         let content = document.getElementById("content").value;
 
