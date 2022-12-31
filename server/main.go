@@ -80,6 +80,8 @@ func main() {
 			})
 
 		})
+		r.Get("/tags", s.getTags)
+		r.Get("/tags/{tag}", s.getTagNotes)
 		r.Get("/search", s.search)
 		r.Get("/notes", s.getNotes)
 		r.Get("/notes/{id}", s.singleNote)

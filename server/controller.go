@@ -275,3 +275,48 @@ func (s *app) search(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Could not open template"))
 	}
 }
+
+func (s *app) getTags(w http.ResponseWriter, r *http.Request) {
+
+	tags, err := s.tags()
+	if err != nil {
+		w.Write([]byte(err.Error()))
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	tmpl, err := template.ParseFiles("server/templates/tags.html")
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Could not open template"))
+	}
+
+	err = tmpl.Execute(w, tags)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Could not open template"))
+	}
+
+}
+
+func (s *app) getTagNotes(w http.ResponseWriter, r *http.Request) {
+	tag := chi.URLParam(r, "tag")
+
+	notes, err := s.tagNotes(tag)
+	if err != nil {
+		w.Write([]byte(err.Error()))
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	tmpl, err := template.ParseFiles("server/templates/index.html")
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Could not open template"))
+	}
+
+	err = tmpl.Execute(w, notes)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Could not open template"))
+	}
+}

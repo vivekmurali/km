@@ -161,3 +161,56 @@ func (s *app) searchDB(term string) ([]notes, error) {
 	return n, nil
 
 }
+
+func (s *app) tags() ([]string, error) {
+	var tags []string
+
+	rows, err := s.db.Query(context.Background(), "select distinct trim(unnest(tags)) as tags from notes where tags is not null")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var tag string
+		err = rows.Scan(&tag)
+		if err != nil {
+			return nil, err
+		}
+		tags = append(tags, tag)
+	}
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return tags, nil
+}
+
+func (s *app) tagNotes(tag string) ([]notes, error) {
+	var n []notes
+
+	rows, err := s.db.Query(context.Background(), "select id, title, created, tags from notes where $1=ANY(tags)", tag)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var singlenote notes
+		var created time.Time
+		err = rows.Scan(&singlenote.ID, &singlenote.Title, &created, &singlenote.Tags)
+		if err != nil {
+			return nil, err
+		}
+
+		loc, _ := time.LoadLocation("America/New_York")
+
+		singlenote.Created = created.In(loc).Format(time.RFC822)
+		n = append(n, singlenote)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+	return n, nil
+}
