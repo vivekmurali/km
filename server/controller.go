@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -55,6 +56,10 @@ func (s *app) postNote(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *app) singleNote(w http.ResponseWriter, r *http.Request) {
+
+	session, _ := s.store.Get(r, "session")
+	authenticated, ok := session.Values["authenticated"].(bool)
+
 	id := chi.URLParam(r, "id")
 	intID, err := strconv.ParseInt(id, 10, 64)
 	if err != nil {
@@ -65,6 +70,12 @@ func (s *app) singleNote(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte(err.Error()))
+	}
+
+	if note.Protected && (!authenticated || !ok) {
+		w.WriteHeader(http.StatusUnauthorized)
+		fmt.Fprint(w, "Not authorized")
+		return
 	}
 
 	//All links open in new tab

@@ -105,7 +105,7 @@ func (s *app) getNotesFromDB(page int, protected bool) ([]notes, error) {
 func (s *app) getSingleNote(id int64) (notes, error) {
 	var note notes
 	var created time.Time
-	err := s.db.QueryRow(context.Background(), "select title, created, tags, content from notes where id=$1", id).Scan(&note.Title, &created, &note.Tags, &note.Content)
+	err := s.db.QueryRow(context.Background(), "select title, created, tags, content, protected from notes where id=$1", id).Scan(&note.Title, &created, &note.Tags, &note.Content, &note.Protected)
 	if err != nil {
 		return note, err
 	}
