@@ -165,7 +165,7 @@ func (s *app) searchDB(term string) ([]notes, error) {
 func (s *app) tags() ([]string, error) {
 	var tags []string
 
-	rows, err := s.db.Query(context.Background(), "select distinct trim(unnest(tags)) as tags from notes where tags is not null")
+	rows, err := s.db.Query(context.Background(), "select distinct trim(unnest(tags)) as tags from notes where tags is not null and protected=false")
 	if err != nil {
 		return nil, err
 	}
