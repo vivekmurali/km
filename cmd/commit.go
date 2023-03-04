@@ -80,14 +80,28 @@ func serverCommit(f os.DirEntry, wg *sync.WaitGroup) error {
 		return err
 	}
 
-	env := os.Getenv("APP_ENV")
-	var url string
-	if env == "dev" {
-		url = "http://localhost:3000/notes"
-	} else {
-		url = "https://notes.vivekmurali.in/notes"
+	url := "https://notes.vivekmurali.in/notes"
+
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(body))
+	if err != nil {
+		return err
 	}
-	res, err := http.Post(url, "application/json", bytes.NewBuffer(body))
+
+	cookieVal, err := os.ReadFile(home + "/.config/km/host")
+	if err != nil {
+		return err
+	}
+
+	cookie := &http.Cookie{
+		Name:  "session",
+		Value: string(cookieVal),
+	}
+
+	req.AddCookie(cookie)
+
+	client := &http.Client{}
+
+	res, err := client.Do(req)
 	if err != nil {
 		return err
 	}

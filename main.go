@@ -34,6 +34,11 @@ func main() {
 				Usage:   "Commit all files to server",
 				Action:  cmd.Commit,
 			},
+			{
+				Name:   "auth",
+				Usage:  "login",
+				Action: cmd.Auth,
+			},
 		},
 	}
 
