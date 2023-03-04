@@ -10,6 +10,7 @@ func (s *app) UnloggedInRedirector(next http.Handler) http.Handler {
 
 		if !authenticated || !ok {
 			http.Redirect(w, r, "/login", http.StatusTemporaryRedirect)
+			return
 		}
 
 		next.ServeHTTP(w, r)
