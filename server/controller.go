@@ -8,7 +8,6 @@ import (
 	"net/http"
 	"os"
 	"strconv"
-	"strings"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/gomarkdown/markdown"
@@ -42,6 +41,9 @@ func (s *app) postNote(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+
+	// s.index.Index("id", n)
+	Index.Index("id", n)
 
 	n.Content = ""
 
@@ -255,37 +257,47 @@ func (s *app) deleteNote(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *app) search(w http.ResponseWriter, r *http.Request) {
-
 	term := r.URL.Query().Get("q")
-
 	if term == "" {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("Empty query"))
 		return
 	}
-
-	sp := strings.Split(term, " ")
-	term = strings.Join(sp, " or ")
-
-	notes, err := s.searchDB(term)
-	if err != nil {
-		log.Println("Error getting notes from DB", err)
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
-
-	tmpl, err := template.ParseFiles("server/templates/index.html")
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("Could not open template"))
-	}
-
-	err = tmpl.Execute(w, notes)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("Could not open template"))
-	}
+	fmt.Fprintf(w, "hello world")
 }
+
+// func (s *app) search(w http.ResponseWriter, r *http.Request) {
+
+// 	term := r.URL.Query().Get("q")
+
+// 	if term == "" {
+// 		w.WriteHeader(http.StatusBadRequest)
+// 		w.Write([]byte("Empty query"))
+// 		return
+// 	}
+
+// 	sp := strings.Split(term, " ")
+// 	term = strings.Join(sp, " or ")
+
+// 	notes, err := s.searchDB(term)
+// 	if err != nil {
+// 		log.Println("Error getting notes from DB", err)
+// 		w.WriteHeader(http.StatusBadRequest)
+// 		return
+// 	}
+
+// 	tmpl, err := template.ParseFiles("server/templates/index.html")
+// 	if err != nil {
+// 		w.WriteHeader(http.StatusInternalServerError)
+// 		w.Write([]byte("Could not open template"))
+// 	}
+
+// 	err = tmpl.Execute(w, notes)
+// 	if err != nil {
+// 		w.WriteHeader(http.StatusInternalServerError)
+// 		w.Write([]byte("Could not open template"))
+// 	}
+// }
 
 func (s *app) getTags(w http.ResponseWriter, r *http.Request) {
 

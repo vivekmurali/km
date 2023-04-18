@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/blevesearch/bleve/v2"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/gorilla/sessions"
@@ -88,4 +89,21 @@ func main() {
 	})
 
 	http.ListenAndServe(os.Getenv("PORT"), r)
+}
+
+func searchInit() (bleve.Index, error) {
+	mapping := bleve.NewIndexMapping()
+	var index bleve.Index
+	var err error
+
+	index, err = bleve.Open("index.bleve")
+	if err != nil {
+		index, err = bleve.New("index.bleve", mapping)
+		if err != nil {
+			fmt.Println(err)
+			return nil, err
+		}
+		return index, nil
+	}
+	return nil, nil
 }

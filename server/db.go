@@ -4,10 +4,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
 	"net/url"
 	"os"
 	"time"
 
+	"github.com/blevesearch/bleve/v2"
 	"github.com/gorilla/sessions"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -17,7 +19,9 @@ type app struct {
 	store *sessions.CookieStore
 }
 
-func (s *app) dbInit() {
+var Index bleve.Index
+
+func (s *app) dbInit() error {
 	var err error
 	s.db, err = pgxpool.New(context.Background(), os.Getenv("DATABASE_URL"))
 	if err != nil {
@@ -26,13 +30,27 @@ func (s *app) dbInit() {
 	}
 
 	var greeting string
-	err = s.db.QueryRow(context.Background(), "select 'Hello, world!'").Scan(&greeting)
+	err = s.db.QueryRow(context.Background(), "select 'Database Init!'").Scan(&greeting)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "QueryRow failed: %v\n", err)
 		os.Exit(1)
 	}
 
+	index, err := bleve.Open("index.bleve")
+	if err == bleve.ErrorIndexPathDoesNotExist {
+		log.Println("Creating new index")
+		mapping := bleve.NewIndexMapping()
+		index, err = bleve.New("index.bleve", mapping)
+		if err != nil {
+			return err
+		}
+	} else if err != nil {
+		return err
+	}
+
+	Index = index
 	fmt.Println(greeting)
+	return nil
 }
 
 func (s *app) closeDB() {
