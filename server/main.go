@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"html/template"
+	"log"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -24,6 +25,12 @@ func main() {
 	s.store = sessions.NewCookieStore([]byte(os.Getenv("SESSION_KEY")))
 	s.dbInit()
 	defer s.closeDB()
+
+	migration := os.Getenv("KM_MIGRATION")
+	if migration == "TRUE" {
+		s.migrateSearch()
+		return
+	}
 
 	r.Use(middleware.Logger)
 
@@ -106,4 +113,20 @@ func searchInit() (bleve.Index, error) {
 		return index, nil
 	}
 	return nil, nil
+}
+
+func (s *app) migrateSearch() {
+	n, err := s.getNotesFromDB(0, false)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for _, v := range n {
+		singleNote, err := s.getSingleNote(v.ID)
+		if err != nil {
+			log.Fatal(err)
+		}
+		singleNote.HTML = ""
+		Index.Index(fmt.Sprintf("%d", v.ID), singleNote)
+	}
 }
