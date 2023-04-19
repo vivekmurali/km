@@ -9,6 +9,7 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/blevesearch/bleve/v2"
 	"github.com/go-chi/chi/v5"
 	"github.com/gomarkdown/markdown"
 	"github.com/gomarkdown/markdown/html"
@@ -36,19 +37,25 @@ func (s *app) postNote(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = s.insertDB(n.Tags, n.Title, n.Content, n.Protected)
+	id, err := s.insertDB(n.Tags, n.Title, n.Content, n.Protected)
 	if err != nil {
+		log.Println(err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	// s.index.Index("id", n)
-	Index.Index("id", n)
+	err = Index.Index(fmt.Sprintf("%d", id), n)
+	if err != nil {
+		log.Println(err)
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 
 	n.Content = ""
 
 	returnJson, err := json.Marshal(n)
 	if err != nil {
+		log.Println(err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -263,41 +270,44 @@ func (s *app) search(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Empty query"))
 		return
 	}
-	fmt.Fprintf(w, "hello world")
+
+	query := bleve.NewMatchQuery(term)
+	search := bleve.NewSearchRequest(query)
+	search.Fields = append(search.Fields, "Title")
+	searchResults, err := Index.Search(search)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	var n []notes
+
+	for _, v := range searchResults.Hits {
+		var singleNote notes
+		singleNote.Title = v.Fields["Title"].(string)
+		int64ID, err := strconv.ParseInt(v.ID, 10, 64)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte("Error parsing ID"))
+		}
+
+		singleNote.ID = int64ID
+
+		n = append(n, singleNote)
+	}
+
+	tmpl, err := template.ParseFiles("server/templates/index.html")
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Could not open template"))
+	}
+
+	err = tmpl.Execute(w, n)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Could not open template"))
+	}
 }
-
-// func (s *app) search(w http.ResponseWriter, r *http.Request) {
-
-// 	term := r.URL.Query().Get("q")
-
-// 	if term == "" {
-// 		w.WriteHeader(http.StatusBadRequest)
-// 		w.Write([]byte("Empty query"))
-// 		return
-// 	}
-
-// 	sp := strings.Split(term, " ")
-// 	term = strings.Join(sp, " or ")
-
-// 	notes, err := s.searchDB(term)
-// 	if err != nil {
-// 		log.Println("Error getting notes from DB", err)
-// 		w.WriteHeader(http.StatusBadRequest)
-// 		return
-// 	}
-
-// 	tmpl, err := template.ParseFiles("server/templates/index.html")
-// 	if err != nil {
-// 		w.WriteHeader(http.StatusInternalServerError)
-// 		w.Write([]byte("Could not open template"))
-// 	}
-
-// 	err = tmpl.Execute(w, notes)
-// 	if err != nil {
-// 		w.WriteHeader(http.StatusInternalServerError)
-// 		w.Write([]byte("Could not open template"))
-// 	}
-// }
 
 func (s *app) getTags(w http.ResponseWriter, r *http.Request) {
 

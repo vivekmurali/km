@@ -71,24 +71,19 @@ func (s *app) editInDB(id int64, tags []string, title, content string, protected
 	return nil
 }
 
-func (s *app) insertDB(tags []string, title, content string, protected bool) error {
+func (s *app) insertDB(tags []string, title, content string, protected bool) (int, error) {
 
 	decodedContent, err := url.QueryUnescape(content)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	tag, err := s.db.Exec(context.Background(), "insert into notes(TITLE, TAGS, CONTENT, PROTECTED) values($1, $2, $3, $4)", &title, &tags, &decodedContent, &protected)
-
+	var id int
+	err = s.db.QueryRow(context.Background(), "insert into notes(TITLE, TAGS, CONTENT, PROTECTED) values($1, $2, $3, $4) RETURNING id", &title, &tags, &decodedContent, &protected).Scan(&id)
 	if err != nil {
-		return err
+		return 0, err
 	}
-
-	if !tag.Insert() {
-		return errors.New("Not insert")
-	}
-
-	return nil
+	return id, nil
 }
 
 func (s *app) getNotesFromDB(page int, protected bool) ([]notes, error) {
