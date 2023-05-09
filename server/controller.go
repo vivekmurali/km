@@ -271,7 +271,8 @@ func (s *app) search(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	query := bleve.NewMatchQuery(term)
+	// query := bleve.NewMatchQuery(term)
+	query := bleve.NewQueryStringQuery(term)
 	search := bleve.NewSearchRequest(query)
 	search.Fields = append(search.Fields, "Title")
 	searchResults, err := Index.Search(search)
