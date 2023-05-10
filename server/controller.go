@@ -260,6 +260,12 @@ func (s *app) deleteNote(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(err.Error()))
 	}
 
+	err = Index.Delete(id)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(err.Error()))
+	}
+
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("Deleted"))
 }
