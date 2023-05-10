@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
 
 	"github.com/blevesearch/bleve/v2"
 	"github.com/go-chi/chi/v5"
@@ -272,6 +273,9 @@ func (s *app) search(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// query := bleve.NewMatchQuery(term)
+	if !strings.Contains(term, ":") {
+		term = fmt.Sprintf("Title:%s^3 Content:%s Tags:%s^2 %s", term, term, term, term)
+	}
 	query := bleve.NewQueryStringQuery(term)
 	search := bleve.NewSearchRequest(query)
 	search.Fields = append(search.Fields, "Title")
