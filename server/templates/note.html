@@ -14,7 +14,7 @@
         <header>
             <h2> <a href="/"> KM</a></h2>
         </header>
-        <h4>{{.Created}} - {{range .Tags}} {{.}} {{end}}</h4>
+        <h4>{{.Created}} - {{range .Tags}} <a href="/tags/{{.}}">{{.}}</a> {{end}}</h4>
         <h1>{{.Title}}</h1>
 
         {{.HTML}}
